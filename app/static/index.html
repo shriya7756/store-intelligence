@@ -12,12 +12,16 @@
             --primary: hsl(217, 91%, 60%);
             --primary-glow: hsla(217, 91%, 60%, 0.15);
             --bg: hsl(222, 47%, 11%);
-            --card-bg: hsla(223, 47%, 16%, 0.6);
+            --card-bg: hsla(223, 47%, 16%, 0.5);
             --card-border: hsla(223, 47%, 26%, 0.4);
             --text-main: hsl(210, 40%, 98%);
             --text-muted: hsl(215, 20%, 65%);
             --accent-green: hsl(142, 71%, 45%);
-            --accent-green-glow: hsla(142, 71%, 45%, 0.2);
+            --accent-green-glow: hsla(142, 71%, 45%, 0.25);
+            --accent-red: hsl(350, 89%, 60%);
+            --accent-red-glow: hsla(350, 89%, 60%, 0.25);
+            --accent-warn: hsl(38, 92%, 50%);
+            --accent-warn-glow: hsla(38, 92%, 50%, 0.25);
             --font-outfit: 'Outfit', sans-serif;
         }
 
@@ -32,23 +36,23 @@
             background-color: var(--bg);
             background-image: 
                 radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), 
-                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.2) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.15) 0, transparent 50%),
                 radial-gradient(at 100% 0%, hsla(217, 91%, 60%, 0.05) 0, transparent 50%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 3rem 2rem;
+            padding: 2.5rem 1.5rem;
             overflow-x: hidden;
         }
 
         .container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
             display: flex;
             flex-direction: column;
-            gap: 2.5rem;
+            gap: 2rem;
         }
 
         header {
@@ -58,14 +62,14 @@
             justify-content: space-between;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            padding: 1.5rem 2rem;
+            padding: 1.2rem 2rem;
             border-radius: 20px;
             backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
         .logo-section h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 800;
             background: linear-gradient(135deg, hsl(210, 40%, 98%) 30%, hsl(217, 91%, 60%) 100%);
             -webkit-background-clip: text;
@@ -74,26 +78,26 @@
         }
 
         .logo-section p {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 400;
-            margin-top: 0.2rem;
+            margin-top: 0.1rem;
         }
 
         .controls {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1.2rem;
         }
 
         .store-selector {
-            background: hsl(223, 47%, 8%);
+            background: hsl(223, 47%, 7%);
             border: 1px solid var(--card-border);
             color: var(--text-main);
             font-family: var(--font-outfit);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            padding: 0.6rem 1.2rem;
+            padding: 0.5rem 1rem;
             border-radius: 10px;
             outline: none;
             cursor: pointer;
@@ -102,20 +106,20 @@
 
         .store-selector:hover, .store-selector:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 12px var(--primary-glow);
+            box-shadow: 0 0 10px var(--primary-glow);
         }
 
         .status-badge {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--accent-green);
             background: var(--accent-green-glow);
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 20px;
-            border: 1px solid hsla(142, 71%, 45%, 0.3);
+            border: 1px solid hsla(142, 71%, 45%, 0.2);
         }
 
         .status-dot {
@@ -133,100 +137,418 @@
             100% { transform: scale(0.9); box-shadow: 0 0 0 0 hsla(142, 71%, 45%, 0); }
         }
 
-        .grid {
+        .metrics-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
         }
 
-        .card {
+        .metric-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 24px;
-            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            padding: 1.8rem;
             backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
             transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.3s;
-            position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
         }
 
-        .card::before {
+        .metric-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 4px;
+            height: 3px;
             background: linear-gradient(90deg, hsl(217, 91%, 60%), hsl(263, 90%, 61%));
-            opacity: 0.8;
         }
 
-        .card:hover {
-            transform: translateY(-8px);
+        .metric-card:hover {
+            transform: translateY(-4px);
             border-color: hsla(217, 91%, 60%, 0.3);
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
         }
 
-        .card-header {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-
-        .label {
-            font-size: 0.9rem;
+        .card-label {
+            font-size: 0.8rem;
             color: var(--text-muted);
             text-transform: uppercase;
             font-weight: 600;
-            letter-spacing: 1.5px;
+            letter-spacing: 1.2px;
         }
 
         .value {
-            font-size: 4.5rem;
+            font-size: 3.5rem;
             font-weight: 800;
             color: var(--text-main);
             line-height: 1.1;
-            margin: 1.5rem 0;
-            letter-spacing: -2px;
+            margin: 1rem 0;
+            letter-spacing: -1.5px;
         }
 
-        .footer-note {
-            font-size: 0.85rem;
-            color: var(--text-muted);
+        .card-footer {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid hsla(223, 47%, 26%, 0.2);
+            padding-top: 0.8rem;
+            margin-top: 0.5rem;
         }
 
-        .sparkline-placeholder {
-            height: 4px;
+        .updated-time {
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+
+        .queue-split {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .split-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .split-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -1px;
+            margin-top: 0.2rem;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 1.5rem;
+        }
+
+        .layout-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.8rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            color: var(--text-main);
+        }
+
+        .confidence-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+        }
+
+        .confidence-high {
+            background: var(--accent-green-glow);
+            color: var(--accent-green);
+            border: 1px solid hsla(142, 71%, 45%, 0.2);
+        }
+
+        .confidence-low {
+            background: var(--accent-warn-glow);
+            color: var(--accent-warn);
+            border: 1px solid hsla(38, 92%, 50%, 0.2);
+        }
+
+        /* CONVERSION FUNNEL STYLING */
+        .funnel-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .funnel-stage {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            background: hsla(223, 47%, 10%, 0.3);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid hsla(223, 47%, 26%, 0.1);
+        }
+
+        .stage-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stage-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .stage-count {
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: monospace;
+        }
+
+        .stage-bar-container {
+            height: 8px;
+            background: hsla(223, 47%, 10%, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
             width: 100%;
-            background: hsla(217, 91%, 60%, 0.1);
-            border-radius: 2px;
-            position: relative;
-            margin-top: 1rem;
+        }
+
+        .stage-bar {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--primary), hsl(217, 91%, 70%));
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .funnel-drop-badge {
+            align-self: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-red);
+            background: var(--accent-red-glow);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            border: 1px solid hsla(350, 89%, 60%, 0.1);
+            margin: 0.2rem 0;
+            font-family: monospace;
+        }
+
+        /* ZONE HEATMAP STYLING */
+        .heatmap-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .heatmap-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: hsla(223, 47%, 8%, 0.3);
+            border-radius: 12px;
+            border: 1px solid hsla(223, 47%, 26%, 0.1);
+        }
+
+        .heatmap-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            flex: 1;
+        }
+
+        .heatmap-zone-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .heatmap-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .heatmap-val-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.2rem;
+            margin-left: 1rem;
+        }
+
+        .heatmap-bar-container {
+            width: 80px;
+            height: 6px;
+            background: hsla(223, 47%, 10%, 0.5);
+            border-radius: 3px;
             overflow: hidden;
         }
 
-        .sparkline-bar {
+        .heatmap-bar {
             height: 100%;
-            width: 70%;
-            background: linear-gradient(90deg, var(--primary), hsl(263, 90%, 61%));
-            border-radius: 2px;
-            animation: expand 1.5s ease-out forwards;
+            background: linear-gradient(90deg, hsl(263, 90%, 61%), hsl(320, 90%, 61%));
+            width: 0%;
+            transition: width 0.8s ease-out;
         }
 
-        @keyframes expand {
-            from { width: 0%; }
-            to { width: 70%; }
+        .heatmap-percent {
+            font-size: 0.85rem;
+            font-weight: 700;
+            font-family: monospace;
+        }
+
+        /* ANOMALIES FEED STYLING */
+        .anomalies-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 0.3rem;
+        }
+
+        .anomalies-feed::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .anomalies-feed::-webkit-scrollbar-thumb {
+            background: var(--card-border);
+            border-radius: 2px;
+        }
+
+        .anomaly-card {
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            border-left-width: 4px;
+            border-left-style: solid;
+        }
+
+        .anomaly-critical {
+            background: hsla(350, 89%, 60%, 0.08);
+            border: 1px solid hsla(350, 89%, 60%, 0.15);
+            border-left-color: var(--accent-red);
+        }
+
+        .anomaly-warn {
+            background: hsla(38, 92%, 50%, 0.08);
+            border: 1px solid hsla(38, 92%, 50%, 0.15);
+            border-left-color: var(--accent-warn);
+        }
+
+        .anomaly-info {
+            background: hsla(217, 91%, 60%, 0.08);
+            border: 1px solid hsla(217, 91%, 60%, 0.15);
+            border-left-color: var(--primary);
+        }
+
+        .anomaly-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .anomaly-severity {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .severity-critical { color: var(--accent-red); }
+        .severity-warn { color: var(--accent-warn); }
+        .severity-info { color: var(--primary); }
+
+        .anomaly-desc {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .anomaly-action {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid hsla(223, 47%, 26%, 0.15);
+            padding-top: 0.5rem;
+            margin-top: 0.2rem;
+            font-style: italic;
+        }
+
+        .no-data {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 2rem 0;
+            font-style: italic;
+        }
+
+        /* HEALTH STATUS PANEL STYLING */
+        .health-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .health-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: hsla(223, 47%, 8%, 0.3);
+            border-radius: 12px;
+            border: 1px solid hsla(223, 47%, 26%, 0.1);
+        }
+
+        .health-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .health-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .status-ok {
+            color: var(--accent-green);
+        }
+
+        .status-warn {
+            color: var(--accent-warn);
+        }
+
+        .status-critical {
+            color: var(--accent-red);
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
-                gap: 1.5rem;
+                gap: 1.2rem;
                 align-items: flex-start;
             }
             .controls {
@@ -249,45 +571,147 @@
                     <option value="ST1008">Apex Retail 1008 (ST1008)</option>
                     <option value="STORE_BLR_002">Apex Bangalore 002 (STORE_BLR_002)</option>
                 </select>
-                <div class="status-badge">
+                <div class="status-badge" id="api-status">
                     <span class="status-dot"></span>
-                    <span>LIVE CONNECTED</span>
+                    <span id="api-status-text">LIVE CONNECTED</span>
                 </div>
             </div>
         </header>
 
-        <div class="grid">
-            <div class="card">
-                <div class="card-header">
-                    <span class="label">Unique Visitors</span>
-                    <div class="value" id="val-visitors">--</div>
+        <!-- TOP METRICS CARD ROW -->
+        <div class="metrics-row">
+            <div class="metric-card">
+                <span class="card-label">Unique Visitors</span>
+                <div class="value" id="val-visitors">--</div>
+                <div class="card-footer">
+                    <span class="note">Customer entries today</span>
+                    <span class="updated-time" id="time-visitors">Updated: --</span>
                 </div>
-                <div class="footer-note">
-                    <span>Active customer entries today</span>
+            </div>
+            <div class="metric-card">
+                <span class="card-label">Conversion Rate</span>
+                <div class="value" id="val-conversion">--%</div>
+                <div class="card-footer">
+                    <span class="note">Checkout conversion ratio</span>
+                    <span class="updated-time" id="time-conversion">Updated: --</span>
                 </div>
-                <div class="sparkline-placeholder"><div class="sparkline-bar" style="width: 85%;"></div></div>
+            </div>
+            <div class="metric-card">
+                <span class="card-label">Queue & Abandonment</span>
+                <div class="queue-split">
+                    <div>
+                        <div class="split-label">Queue Depth</div>
+                        <div class="split-value" id="val-queue">--</div>
+                    </div>
+                    <div>
+                        <div class="split-label">Abandon Rate</div>
+                        <div class="split-value" id="val-abandon">--%</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="note">Billing queue statistics</span>
+                    <span class="updated-time" id="time-queue">Updated: --</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN LAYOUT GRID -->
+        <div class="main-layout">
+            <!-- LEFT COLUMN: FUNNEL & HEATMAP -->
+            <div class="layout-column">
+                <!-- CONVERSION FUNNEL -->
+                <div class="content-card">
+                    <div class="card-title">Conversion Funnel</div>
+                    <div class="funnel-container">
+                        <!-- Step 1: ENTRY -->
+                        <div class="funnel-stage">
+                            <div class="stage-info">
+                                <span class="stage-name">1. Entry</span>
+                                <span class="stage-count" id="funnel-entry">--</span>
+                            </div>
+                            <div class="stage-bar-container">
+                                <div class="stage-bar" id="bar-entry" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="funnel-drop-badge" id="drop-zone">Drop: --%</div>
+                        
+                        <!-- Step 2: ZONE VISIT -->
+                        <div class="funnel-stage">
+                            <div class="stage-info">
+                                <span class="stage-name">2. Zone Visit</span>
+                                <span class="stage-count" id="funnel-zone">--</span>
+                            </div>
+                            <div class="stage-bar-container">
+                                <div class="stage-bar" id="bar-zone" style="width: 0%; background: linear-gradient(90deg, hsl(217, 91%, 60%), hsl(263, 90%, 61%));"></div>
+                            </div>
+                        </div>
+                        <div class="funnel-drop-badge" id="drop-billing">Drop: --%</div>
+                        
+                        <!-- Step 3: BILLING QUEUE -->
+                        <div class="funnel-stage">
+                            <div class="stage-info">
+                                <span class="stage-name">3. Billing Queue</span>
+                                <span class="stage-count" id="funnel-billing">--</span>
+                            </div>
+                            <div class="stage-bar-container">
+                                <div class="stage-bar" id="bar-billing" style="width: 0%; background: linear-gradient(90deg, hsl(263, 90%, 61%), hsl(320, 90%, 61%));"></div>
+                            </div>
+                        </div>
+                        <div class="funnel-drop-badge" id="drop-purchase">Drop: --%</div>
+                        
+                        <!-- Step 4: PURCHASE -->
+                        <div class="funnel-stage">
+                            <div class="stage-info">
+                                <span class="stage-name">4. Purchase</span>
+                                <span class="stage-count" id="funnel-purchase">--</span>
+                            </div>
+                            <div class="stage-bar-container">
+                                <div class="stage-bar" id="bar-purchase" style="width: 0%; background: linear-gradient(90deg, hsl(320, 90%, 61%), var(--accent-green));"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ZONE HEATMAP -->
+                <div class="content-card">
+                    <div class="card-title-row">
+                        <div class="card-title">Zone Heatmap</div>
+                        <div class="confidence-badge" id="confidence-badge">--</div>
+                    </div>
+                    <div class="heatmap-container" id="heatmap-list">
+                        <div class="no-data">No active zone dwells</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <span class="label">Conversion Rate</span>
-                    <div class="value" id="val-conversion">--%</div>
+            <!-- RIGHT COLUMN: ANOMALIES & PIPELINE HEALTH -->
+            <div class="layout-column">
+                <!-- ACTIVE ANOMALIES -->
+                <div class="content-card">
+                    <div class="card-title">Active Anomalies</div>
+                    <div class="anomalies-feed" id="anomalies-list">
+                        <div class="no-data">No active anomalies detected</div>
+                    </div>
                 </div>
-                <div class="footer-note">
-                    <span>Completed checkout ratio</span>
-                </div>
-                <div class="sparkline-placeholder"><div class="sparkline-bar" style="width: 55%; background: linear-gradient(90deg, hsl(263, 90%, 61%), hsl(320, 90%, 61%));"></div></div>
-            </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <span class="label">Billing Queue Depth</span>
-                    <div class="value" id="val-queue">--</div>
+                <!-- PIPELINE HEALTH & SERVICES -->
+                <div class="content-card">
+                    <div class="card-title">Pipeline Connection & Health</div>
+                    <div class="health-list">
+                        <div class="health-item">
+                            <span class="health-label">API Service Status</span>
+                            <span class="health-value status-ok" id="health-api-status">OK</span>
+                        </div>
+                        <div class="health-item">
+                            <span class="health-label">Last Ingested Event</span>
+                            <span class="health-value" id="health-last-event">--</span>
+                        </div>
+                        <div class="health-item">
+                            <span class="health-label">Feed Lag / Staleness Warnings</span>
+                            <span class="health-value status-ok" id="health-warnings">No Warnings</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="footer-note">
-                    <span>Customers currently in queue</span>
-                </div>
-                <div class="sparkline-placeholder"><div class="sparkline-bar" style="width: 30%; background: linear-gradient(90deg, var(--accent-green), var(--primary));"></div></div>
             </div>
         </div>
     </div>
@@ -295,8 +719,16 @@
     <script>
         let fetchInterval = null;
 
-        async function fetchMetrics() {
+        function getFormattedTime() {
+            const now = new Date();
+            return now.toTimeString().split(' ')[0];
+        }
+
+        async function fetchAllData() {
             const storeId = document.getElementById('storeSelect').value;
+            const updatedTime = getFormattedTime();
+
+            // 1. Fetch Metrics Card data
             try {
                 const res = await fetch(`/stores/${storeId}/metrics`);
                 if (res.ok) {
@@ -304,20 +736,195 @@
                     document.getElementById('val-visitors').innerText = data.unique_visitors;
                     document.getElementById('val-conversion').innerText = (data.conversion_rate * 100).toFixed(1) + '%';
                     document.getElementById('val-queue').innerText = data.queue_depth;
+                    document.getElementById('val-abandon').innerText = (data.abandonment_rate * 100).toFixed(1) + '%';
+                    
+                    document.getElementById('time-visitors').innerText = "Updated: " + updatedTime;
+                    document.getElementById('time-conversion').innerText = "Updated: " + updatedTime;
+                    document.getElementById('time-queue').innerText = "Updated: " + updatedTime;
+                    
+                    setAPIConnected(true);
+                } else {
+                    setAPIConnected(false);
                 }
             } catch (err) {
                 console.error("Error fetching metrics", err);
+                setAPIConnected(false);
+            }
+
+            // 2. Fetch Funnel data
+            try {
+                const res = await fetch(`/stores/${storeId}/funnel`);
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('funnel-entry').innerText = data.entry_count;
+                    document.getElementById('funnel-zone').innerText = data.zone_visit_count;
+                    document.getElementById('funnel-billing').innerText = data.billing_queue_count;
+                    document.getElementById('funnel-purchase').innerText = data.purchase_count;
+
+                    // Update bars width based on percentages relative to entry
+                    const entryVal = data.entry_count || 1;
+                    const zonePercent = (data.zone_visit_count / entryVal) * 100;
+                    const billingPercent = (data.billing_queue_count / entryVal) * 100;
+                    const purchasePercent = (data.purchase_count / entryVal) * 100;
+
+                    document.getElementById('bar-zone').style.width = zonePercent + '%';
+                    document.getElementById('bar-billing').style.width = billingPercent + '%';
+                    document.getElementById('bar-purchase').style.width = purchasePercent + '%';
+
+                    document.getElementById('drop-zone').innerText = "Drop-off: " + data.drop_off_pct_entry_to_zone.toFixed(1) + "%";
+                    document.getElementById('drop-billing').innerText = "Drop-off: " + data.drop_off_pct_zone_to_billing.toFixed(1) + "%";
+                    document.getElementById('drop-purchase').innerText = "Drop-off: " + data.drop_off_pct_billing_to_purchase.toFixed(1) + "%";
+                }
+            } catch (err) {
+                console.error("Error fetching funnel", err);
+            }
+
+            // 3. Fetch Heatmap data
+            try {
+                const res = await fetch(`/stores/${storeId}/heatmap`);
+                if (res.ok) {
+                    const data = await res.json();
+                    
+                    // Render Confidence Badge
+                    const confBadge = document.getElementById('confidence-badge');
+                    if (data.data_confidence) {
+                        confBadge.className = "confidence-badge confidence-high";
+                        confBadge.innerText = "High Confidence (>= 20 sessions)";
+                    } else {
+                        confBadge.className = "confidence-badge confidence-low";
+                        confBadge.innerText = "Low Confidence (< 20 sessions)";
+                    }
+
+                    // Render Heatmap Items
+                    const listContainer = document.getElementById('heatmap-list');
+                    listContainer.innerHTML = '';
+                    if (data.zones && data.zones.length > 0) {
+                        data.zones.forEach(z => {
+                            const avgDwellSecs = (z.avg_dwell_ms / 1000).toFixed(1);
+                            const itemHtml = `
+                                <div class="heatmap-item">
+                                    <div class="heatmap-details">
+                                        <span class="heatmap-zone-name">${z.zone_id}</span>
+                                        <span class="heatmap-stats">Avg Dwell: ${avgDwellSecs}s</span>
+                                    </div>
+                                    <div class="heatmap-val-group">
+                                        <span class="heatmap-percent">${z.visit_frequency_normalized.toFixed(0)}%</span>
+                                        <div class="heatmap-bar-container">
+                                            <div class="heatmap-bar" style="width: ${z.visit_frequency_normalized}%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            listContainer.innerHTML += itemHtml;
+                        });
+                    } else {
+                        listContainer.innerHTML = '<div class="no-data">No active zone dwells</div>';
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching heatmap", err);
+            }
+
+            // 4. Fetch Anomalies
+            try {
+                const res = await fetch(`/stores/${storeId}/anomalies`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const listContainer = document.getElementById('anomalies-list');
+                    listContainer.innerHTML = '';
+                    if (data.active_anomalies && data.active_anomalies.length > 0) {
+                        data.active_anomalies.forEach(anom => {
+                            const severityLower = anom.severity.toLowerCase();
+                            const cardHtml = `
+                                <div class="anomaly-card anomaly-${severityLower}">
+                                    <div class="anomaly-header">
+                                        <span class="anomaly-severity severity-${severityLower}">${anom.severity}</span>
+                                    </div>
+                                    <div class="anomaly-desc">${anom.description}</div>
+                                    <div class="anomaly-action">Action: ${anom.suggested_action}</div>
+                                </div>
+                            `;
+                            listContainer.innerHTML += cardHtml;
+                        });
+                    } else {
+                        listContainer.innerHTML = '<div class="no-data">No active anomalies detected</div>';
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching anomalies", err);
+            }
+
+            // 5. Fetch Health Status
+            try {
+                const res = await fetch('/health');
+                if (res.ok) {
+                    const data = await res.json();
+                    
+                    // Service Status
+                    const healthApi = document.getElementById('health-api-status');
+                    healthApi.innerText = data.status;
+                    if (data.status === "OK") {
+                        healthApi.className = "health-value status-ok";
+                    } else {
+                        healthApi.className = "health-value status-warn";
+                    }
+
+                    // Last Ingested Event per Store
+                    const lastTs = data.last_event_timestamps[storeId];
+                    const healthLast = document.getElementById('health-last-event');
+                    if (lastTs) {
+                        const date = new Date(lastTs);
+                        healthLast.innerText = date.toISOString().replace('T', ' ').substring(0, 19) + " UTC";
+                    } else {
+                        healthLast.innerText = "No events ingested";
+                    }
+
+                    // Lag Warnings
+                    const healthWarn = document.getElementById('health-warnings');
+                    if (data.warnings && data.warnings.length > 0) {
+                        // Check if warning is for this store
+                        const storeWarning = data.warnings.find(w => w.includes(storeId));
+                        if (storeWarning) {
+                            healthWarn.innerText = "STALE_FEED: >10 min lag";
+                            healthWarn.className = "health-value status-warn";
+                        } else {
+                            healthWarn.innerText = "Feed Normal";
+                            healthWarn.className = "health-value status-ok";
+                        }
+                    } else {
+                        healthWarn.innerText = "Feed Normal";
+                        healthWarn.className = "health-value status-ok";
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching health", err);
+            }
+        }
+
+        function setAPIConnected(connected) {
+            const badge = document.getElementById('api-status');
+            const text = document.getElementById('api-status-text');
+            if (connected) {
+                badge.style.color = "var(--accent-green)";
+                badge.style.background = "var(--accent-green-glow)";
+                badge.style.borderColor = "hsla(142, 71%, 45%, 0.2)";
+                text.innerText = "LIVE CONNECTED";
+            } else {
+                badge.style.color = "var(--accent-red)";
+                badge.style.background = "var(--accent-red-glow)";
+                badge.style.borderColor = "hsla(350, 89%, 60%, 0.2)";
+                text.innerText = "DISCONNECTED";
             }
         }
 
         function onStoreChange() {
             // Fetch immediately on store change
-            fetchMetrics();
+            fetchAllData();
         }
-        
-        // Start polling
-        fetchMetrics();
-        fetchInterval = setInterval(fetchMetrics, 2000);
+
+        // Initialize polling
+        fetchAllData();
+        fetchInterval = setInterval(fetchAllData, 2000);
     </script>
 </body>
 </html>
