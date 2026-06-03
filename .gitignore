@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database
+store.db
+
+# Test and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.coverage.*
+
+# Detection pipeline outputs & caches
+reid_gallery.json
+events.jsonl
+events_floor.jsonl
+events_billing.jsonl
+*.jsonl
+
+# Environment / OS
+.venv/
+venv/
+ENV/
+.env
+.DS_Store
+Thumbs.db
