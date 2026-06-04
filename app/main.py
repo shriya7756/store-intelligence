@@ -2,7 +2,7 @@ import time
 import uuid
 import logging
 from fastapi import FastAPI, Depends, Request, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from typing import List
@@ -27,6 +27,10 @@ app.mount("/dashboard", StaticFiles(directory="app/static", html=True), name="st
 @app.on_event("startup")
 def startup_event():
     init_db()
+
+@app.get("/")
+def root():
+    return RedirectResponse(url="/dashboard/")
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
