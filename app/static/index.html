@@ -882,12 +882,14 @@
                     // avg dwell card
                     const avgEl = document.getElementById('val-avg-dwell');
                     const zoneNameEl = document.getElementById('avg-zone-name');
-                    if (topZone) {
-                        avgEl.innerText = (topAvgDwell / 1000).toFixed(1) + 's ';
-                        zoneNameEl.innerText = topZone;
-                        zoneNameEl.title = topZone;
-                    } else {
-                        avgEl.innerText = '--s'; zoneNameEl.innerText = '';
+                    if (avgEl && zoneNameEl) {
+                        if (topZone) {
+                            avgEl.innerText = (topAvgDwell / 1000).toFixed(1) + 's ';
+                            zoneNameEl.innerText = topZone;
+                            zoneNameEl.title = topZone;
+                        } else {
+                            avgEl.innerText = '--s'; zoneNameEl.innerText = '';
+                        }
                     }
 
                     // Update bubble chart (x: visit freq %, y: avg dwell s, r: size)
@@ -917,15 +919,17 @@
                         }
                     } catch (e) { console.warn('Chart update failed', e); }
 
-                    document.getElementById('time-avg-dwell').innerText = 'Updated: ' + updatedTime;
+                    const timeAvgEl = document.getElementById('time-avg-dwell');
+                    if (timeAvgEl) timeAvgEl.innerText = 'Updated: ' + updatedTime;
                 }
 
                 // Stats
                 if (results[5].status === 'fulfilled' && results[5].value.ok) {
                     const data = await results[5].value.json();
                     const eventsEl = document.getElementById('val-events');
-                    eventsEl.innerText = data.total_events || 0;
-                    document.getElementById('time-events').innerText = 'Updated: ' + updatedTime;
+                    const timeEventsEl = document.getElementById('time-events');
+                    if (eventsEl) eventsEl.innerText = data.total_events || 0;
+                    if (timeEventsEl) timeEventsEl.innerText = 'Updated: ' + updatedTime;
                 }
 
                 // Anomalies
@@ -971,7 +975,8 @@
 
                 // reset last refresh counter
                 lastRefreshSeconds = 0;
-                document.getElementById('last-refresh').innerText = 'Last refresh: 0s ago';
+                const refreshEl = document.getElementById('last-refresh');
+                if (refreshEl) refreshEl.innerText = 'Last refresh: 0s ago';
 
                 // clear loading states
                 document.querySelectorAll('.metric-card, .content-card').forEach(el => el.classList.remove('loading'));
