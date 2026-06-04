@@ -1,7 +1,7 @@
 import csv
 import os
 from datetime import datetime, timedelta
-from database import engine, DBPosTransaction, DBEvent, SessionLocal, init_db
+from .database import engine, DBPosTransaction, DBEvent, SessionLocal, init_db
 
 def load_pos_data():
     csv_path = "pos_transactions.csv"

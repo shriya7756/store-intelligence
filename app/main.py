@@ -10,6 +10,7 @@ from typing import List
 from .models import StoreEvent, MetricResponse, FunnelResponse, HeatmapResponse, AnomaliesResponse, HealthResponse
 from .database import engine, Base, get_db, init_db
 from .ingestion import process_events, process_single_event
+from .seed import load_pos_data, load_events_data
 from pydantic import ValidationError
 from .metrics import get_metrics
 from .funnel import get_funnel
@@ -27,6 +28,8 @@ app.mount("/dashboard", StaticFiles(directory="app/static", html=True), name="st
 @app.on_event("startup")
 def startup_event():
     init_db()
+    load_pos_data()
+    load_events_data()
 
 @app.get("/")
 def root():
