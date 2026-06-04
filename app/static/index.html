@@ -879,33 +879,6 @@
                 console.error('Error fetching stats', err);
             }
 
-                    if (data.zones && data.zones.length > 0) {
-                        data.zones.forEach(z => {
-                            const avgDwellSecs = (z.avg_dwell_ms / 1000).toFixed(1);
-                            const itemHtml = `
-                                <div class="heatmap-item">
-                                    <div class="heatmap-details">
-                                        <span class="heatmap-zone-name">${z.zone_id}</span>
-                                        <span class="heatmap-stats">Avg Dwell: ${avgDwellSecs}s</span>
-                                    </div>
-                                    <div class="heatmap-val-group">
-                                        <span class="heatmap-percent">${z.visit_frequency_normalized.toFixed(0)}%</span>
-                                        <div class="heatmap-bar-container">
-                                            <div class="heatmap-bar" style="width: ${z.visit_frequency_normalized}%;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                            listContainer.innerHTML += itemHtml;
-                        });
-                    } else {
-                        listContainer.innerHTML = '<div class="no-data">No active zone dwells</div>';
-                    }
-                }
-            } catch (err) {
-                console.error("Error fetching heatmap", err);
-            }
-
             // 4. Fetch Anomalies
             try {
                 const res = await fetch(`/stores/${storeId}/anomalies`);
