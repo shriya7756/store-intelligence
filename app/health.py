@@ -17,21 +17,14 @@ def get_health_status(db: Session) -> HealthResponse:
     
     last_event_timestamps = {store_id: ts for store_id, ts in last_events}
     
-    # Calculate smart reference time: if the data is historical/test data, use the max timestamp overall
-    max_ts_overall = db.query(func.max(DBEvent.timestamp)).scalar()
-    now = datetime.utcnow()
-    if max_ts_overall:
-        if now - max_ts_overall > timedelta(hours=1):
-            ref_time = max_ts_overall
-        else:
-            ref_time = now
-    else:
-        ref_time = now
+    # Use max event timestamp as reference ceiling (avoid false stale warnings with historical data)
+    all_times = [ts for _, ts in last_events if ts]
+    reference_time = max(all_times) if all_times else datetime.utcnow()
         
-    # Check for STALE_FEED if last event > 10 min ago — return structured warnings
+    # Check for STALE_FEED if last event > 10 min before reference time
     for store_id, last_ts in last_event_timestamps.items():
-        if last_ts and (datetime.utcnow() - last_ts) > timedelta(minutes=10):
-            lag_mins = round((datetime.utcnow() - last_ts).total_seconds() / 60.0, 1)
+        if last_ts and (reference_time - last_ts) > timedelta(minutes=10):
+            lag_mins = round((reference_time - last_ts).total_seconds() / 60.0, 1)
             warnings.append({
                 "type": "STALE_FEED",
                 "store_id": store_id,
