@@ -48,31 +48,27 @@ def get_metrics(store_id: str, db: Session) -> MetricResponse:
     unique_visitors_count = len(unique_visitors)
     
     # 2. Conversion Rate (visitors who purchased / unique visitors)
-    # A visitor who was in the billing zone in the 5-minute window before a transaction timestamp
+    # A visitor who was in the billing zone within 5 minutes BEFORE a transaction timestamp
     # counts as a converted visitor for that session.
-    joins = db.query(DBEvent).filter(
-        DBEvent.store_id == store_id,
-        DBEvent.is_staff == False,
-        DBEvent.event_type == 'BILLING_QUEUE_JOIN',
-        DBEvent.timestamp >= today_start,
-        DBEvent.timestamp < today_end
-    ).all()
-    
     transactions = db.query(DBPosTransaction).filter(
         DBPosTransaction.store_id == store_id,
         DBPosTransaction.timestamp >= today_start,
         DBPosTransaction.timestamp < today_end
     ).all()
-    
+
     converted_visitors = set()
-    for join in joins:
-        for tx in transactions:
-            # tx timestamp must be within 5 minutes after join timestamp
-            time_diff = (tx.timestamp - join.timestamp).total_seconds()
-            if 0 <= time_diff <= 300:
-                converted_visitors.add(join.visitor_id)
-                break
-                
+    for tx in transactions:
+        window_start = tx.timestamp - timedelta(minutes=5)
+        joins_in_window = db.query(DBEvent.visitor_id).filter(
+            DBEvent.store_id == store_id,
+            DBEvent.is_staff == False,
+            DBEvent.event_type == 'BILLING_QUEUE_JOIN',
+            DBEvent.timestamp >= window_start,
+            DBEvent.timestamp <= tx.timestamp
+        ).distinct().all()
+        for j in joins_in_window:
+            converted_visitors.add(j[0])
+
     conversion_rate = (len(converted_visitors) / unique_visitors_count) if unique_visitors_count > 0 else 0.0
     
     # 3. Avg Dwell Per Zone today
@@ -123,7 +119,7 @@ def get_metrics(store_id: str, db: Session) -> MetricResponse:
     queue_depth = len(joined_set - left_set)
         
     # 5. Abandonment Rate (Abandoned queues / Total joined queues) today
-    joins_count = len(joins)
+    joins_count = len(joined_q)
     abandons_count = db.query(DBEvent).filter(
         DBEvent.store_id == store_id,
         DBEvent.event_type == 'BILLING_QUEUE_ABANDON',

@@ -6,23 +6,21 @@
     <title>Apex Store Intelligence - Live Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: hsl(217, 91%, 60%);
-            --primary-glow: hsla(217, 91%, 60%, 0.15);
-            --bg: hsl(222, 47%, 11%);
-            --card-bg: hsla(223, 47%, 16%, 0.5);
-            --card-border: hsla(223, 47%, 26%, 0.4);
-            --text-main: hsl(210, 40%, 98%);
-            --text-muted: hsl(215, 20%, 65%);
-            --accent-green: hsl(142, 71%, 45%);
-            --accent-green-glow: hsla(142, 71%, 45%, 0.25);
-            --accent-red: hsl(350, 89%, 60%);
-            --accent-red-glow: hsla(350, 89%, 60%, 0.25);
-            --accent-warn: hsl(38, 92%, 50%);
-            --accent-warn-glow: hsla(38, 92%, 50%, 0.25);
-            --font-outfit: 'Outfit', sans-serif;
+            --bg: #0F0F13;
+            --card-bg: #16161E;
+            --card-border: rgba(255,255,255,0.07);
+            --text-primary: #E8E8F0;
+            --text-secondary: #888899;
+            --text-tertiary: rgba(232,232,240,0.6);
+            --accent-purple: #7F77DD;
+            --accent-green: #1D9E75;
+            --accent-amber: #EF9F27;
+            --accent-red: #E24B4A;
+            --card-radius: 12px;
+            --font-stack: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
         }
 
         * {
@@ -32,7 +30,7 @@
         }
 
         body {
-            font-family: var(--font-outfit);
+            font-family: var(--font-stack);
             background-color: var(--bg);
             background-image: 
                 radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), 
@@ -62,20 +60,19 @@
             justify-content: space-between;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            padding: 1.2rem 2rem;
-            border-radius: 20px;
+            padding: 1rem 1.2rem;
+            border-radius: var(--card-radius);
             backdrop-filter: blur(12px);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
         .logo-section h1 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, hsl(210, 40%, 98%) 30%, hsl(217, 91%, 60%) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
         }
+
+        .logo-section h1 span { color: var(--accent-purple); }
 
         .logo-section p {
             font-size: 0.85rem;
@@ -113,13 +110,13 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--accent-green);
-            background: var(--accent-green-glow);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            border: 1px solid hsla(142, 71%, 45%, 0.2);
+            background: rgba(29,158,117,0.08);
+            padding: 0.36rem 0.8rem;
+            border-radius: 999px;
+            border: 1px solid rgba(29,158,117,0.12);
         }
 
         .status-dot {
@@ -143,27 +140,55 @@
             gap: 1.5rem;
         }
 
+        /* Skeleton + loading states */
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.03));
+        }
+        .skeleton::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -150px; height: 100%; width: 150px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+            animation: shimmer 1.2s infinite;
+        }
+        @keyframes shimmer { to { left: 100%; } }
+
+        .loading .kpi-value { color: transparent !important; }
+        .loading .updated-time { opacity: 0.6; }
+
+        /* Chart canvas */
+        #heatmap-bubble { width: 100% !important; max-height: 220px; display:block; margin-top: 12px; }
+
         .metric-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 1.8rem;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.3s;
+            border-radius: var(--card-radius);
+            padding: 1rem;
+            box-shadow: none;
+            transition: transform 0.18s ease, border-color 0.18s ease;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
+            min-height: 90px;
         }
 
         .metric-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, hsl(217, 91%, 60%), hsl(263, 90%, 61%));
+            height: 4px;
+            border-top-left-radius: calc(var(--card-radius) - 2px);
+            border-top-right-radius: calc(var(--card-radius) - 2px);
+            background: var(--accent-purple);
         }
+
+        .metric-card.accent-green::before { background: var(--accent-green); }
+        .metric-card.accent-amber::before { background: var(--accent-amber); }
+        .metric-card.accent-red::before { background: var(--accent-red); }
+        .metric-card.accent-neutral::before { background: rgba(255,255,255,0.06); }
 
         .metric-card:hover {
             transform: translateY(-4px);
@@ -171,36 +196,50 @@
         }
 
         .card-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            font-size: 11px;
+            color: var(--text-secondary);
             text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 1.2px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
         }
 
-        .value {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--text-main);
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--text-primary);
             line-height: 1.1;
-            margin: 1rem 0;
-            letter-spacing: -1.5px;
+            margin: 8px 0;
         }
 
         .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            border-top: 1px solid hsla(223, 47%, 26%, 0.2);
-            padding-top: 0.8rem;
-            margin-top: 0.5rem;
+            font-size: 10px;
+            color: var(--text-tertiary);
+            padding-top: 8px;
+            margin-top: 6px;
         }
 
         .updated-time {
-            font-size: 0.75rem;
+            font-size: 10px;
+            color: var(--text-tertiary);
             font-family: monospace;
+        }
+
+        /* KPI grid */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .zone-name {
+            display: block;
+            max-width: 160px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .queue-split {
@@ -571,62 +610,60 @@
                     <option value="ST1008">Apex Retail 1008 (ST1008)</option>
                     <option value="STORE_BLR_002">Apex Bangalore 002 (STORE_BLR_002)</option>
                 </select>
-                <div class="status-badge" id="api-status">
-                    <span class="status-dot"></span>
-                    <span id="api-status-text">LIVE CONNECTED</span>
+                <div style="display:flex;gap:10px;align-items:center">
+                    <div class="status-badge" id="api-status">
+                        <span class="status-dot"></span>
+                        <span id="api-status-text">LIVE CONNECTED</span>
+                    </div>
+                    <div id="last-refresh" style="font-size:12px;color:var(--text-tertiary);">Last refresh: --s ago</div>
                 </div>
             </div>
         </header>
 
         <!-- TOP METRICS CARD ROW -->
         <div class="metrics-row">
-            <div class="metric-card">
+            <div class="metric-card accent-purple">
                 <span class="card-label">Unique Visitors</span>
-                <div class="value" id="val-visitors">--</div>
+                <div class="kpi-value" id="val-visitors">--</div>
                 <div class="card-footer">
                     <span class="note">Customer entries today</span>
                     <span class="updated-time" id="time-visitors">Updated: --</span>
                 </div>
             </div>
-            <div class="metric-card">
-                <span class="card-label">Avg Dwell (Top Zone)</span>
-                <div class="value" id="val-avg-dwell">--s</div>
-                <div class="card-footer">
-                    <span class="note">Average dwell (seconds)</span>
-                    <span class="updated-time" id="time-avg-dwell">Updated: --</span>
-                </div>
-            </div>
-            <div class="metric-card">
-                <span class="card-label">Events Ingested</span>
-                <div class="value" id="val-events">--</div>
-                <div class="card-footer">
-                    <span class="note">Total events for selected store</span>
-                    <span class="updated-time" id="time-events">Updated: --</span>
-                </div>
-            </div>
-            <div class="metric-card">
+
+            <div class="metric-card accent-green">
                 <span class="card-label">Conversion Rate</span>
-                <div class="value" id="val-conversion">--%</div>
+                <div class="kpi-value" id="val-conversion">--%</div>
                 <div class="card-footer">
                     <span class="note">Checkout conversion ratio</span>
                     <span class="updated-time" id="time-conversion">Updated: --</span>
                 </div>
             </div>
-            <div class="metric-card">
-                <span class="card-label">Queue & Abandonment</span>
-                <div class="queue-split">
-                    <div>
-                        <div class="split-label">Queue Depth</div>
-                        <div class="split-value" id="val-queue">--</div>
-                    </div>
-                    <div>
-                        <div class="split-label">Abandon Rate</div>
-                        <div class="split-value" id="val-abandon">--%</div>
-                    </div>
-                </div>
+
+            <div class="metric-card accent-amber">
+                <span class="card-label">Avg Dwell (Top Zone)</span>
+                <div class="kpi-value" id="val-avg-dwell">--s <span class="zone-name" id="avg-zone-name"></span></div>
                 <div class="card-footer">
-                    <span class="note">Billing queue statistics</span>
-                    <span class="updated-time" id="time-queue">Updated: --</span>
+                    <span class="note">Average dwell (seconds)</span>
+                    <span class="updated-time" id="time-avg-dwell">Updated: --</span>
+                </div>
+            </div>
+
+            <div class="metric-card accent-red">
+                <span class="card-label">Abandonment Rate</span>
+                <div class="kpi-value" id="val-abandon">--%</div>
+                <div class="card-footer">
+                    <span class="note">Abandoned queues / joined</span>
+                    <span class="updated-time" id="time-abandon">Updated: --</span>
+                </div>
+            </div>
+
+            <div class="metric-card accent-neutral">
+                <span class="card-label">Events Ingested</span>
+                <div class="kpi-value" id="val-events">--</div>
+                <div class="card-footer">
+                    <span class="note">Total events for selected store</span>
+                    <span class="updated-time" id="time-events">Updated: --</span>
                 </div>
             </div>
         </div>
@@ -694,8 +731,11 @@
                         <div class="card-title">Zone Heatmap</div>
                         <div class="confidence-badge" id="confidence-badge">--</div>
                     </div>
-                    <div class="heatmap-container" id="heatmap-list">
-                        <div class="no-data">No active zone dwells</div>
+                    <div class="heatmap-container">
+                        <div id="heatmap-list" class="heatmap-list">
+                            <div class="no-data">No active zone dwells</div>
+                        </div>
+                        <canvas id="heatmap-bubble" height="180"></canvas>
                     </div>
                 </div>
             </div>
@@ -732,226 +772,213 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let fetchInterval = null;
+        let heatmapChart = null;
+        let lastRefreshSeconds = 0;
+        const POLL_INTERVAL = 10000;
 
         function getFormattedTime() {
             const now = new Date();
             return now.toTimeString().split(' ')[0];
         }
 
+        function startTicker() {
+            const el = document.getElementById('last-refresh');
+            if (!el) return;
+            setInterval(() => {
+                lastRefreshSeconds += 1;
+                el.innerText = `Last refresh: ${lastRefreshSeconds}s ago`;
+            }, 1000);
+        }
+
+        function markCardError(cardId, errMsg) {
+            const el = document.getElementById(cardId);
+            if (!el) return;
+            el.innerText = '--';
+            const footer = document.getElementById('time-' + cardId.split('-')[1]);
+            if (footer) footer.innerText = 'Feed error';
+        }
+
         async function fetchAllData() {
             const storeId = document.getElementById('storeSelect').value;
             const updatedTime = getFormattedTime();
 
-            // 1. Fetch Metrics Card data
+            // mark loading states on relevant cards
+            document.querySelectorAll('.metric-card, .content-card').forEach(el => el.classList.add('loading'));
+
+            const endpoints = {
+                metrics: `/stores/${storeId}/metrics`,
+                funnel: `/stores/${storeId}/funnel`,
+                heatmap: `/stores/${storeId}/heatmap`,
+                anomalies: `/stores/${storeId}/anomalies`,
+                health: `/health`,
+                stats: `/stores/${storeId}/stats`
+            };
+
+            // Fetch all endpoints in parallel
             try {
-                const res = await fetch(`/stores/${storeId}/metrics`);
-                if (res.ok) {
-                    const data = await res.json();
+                const results = await Promise.allSettled(Object.values(endpoints).map(u => fetch(u)));
+
+                // Metrics
+                if (results[0].status === 'fulfilled' && results[0].value.ok) {
+                    const data = await results[0].value.json();
                     document.getElementById('val-visitors').innerText = data.unique_visitors;
                     document.getElementById('val-conversion').innerText = (data.conversion_rate * 100).toFixed(1) + '%';
-                    document.getElementById('val-queue').innerText = data.queue_depth;
                     document.getElementById('val-abandon').innerText = (data.abandonment_rate * 100).toFixed(1) + '%';
-                    
-                    document.getElementById('time-visitors').innerText = "Updated: " + updatedTime;
-                    document.getElementById('time-conversion').innerText = "Updated: " + updatedTime;
-                    document.getElementById('time-queue').innerText = "Updated: " + updatedTime;
-                    
+                    document.getElementById('time-visitors').innerText = 'Updated: ' + updatedTime;
+                    document.getElementById('time-conversion').innerText = 'Updated: ' + updatedTime;
+                    document.getElementById('time-abandon').innerText = 'Updated: ' + updatedTime;
                     setAPIConnected(true);
                 } else {
                     setAPIConnected(false);
+                    markCardError('val-visitors');
                 }
-            } catch (err) {
-                console.error("Error fetching metrics", err);
-                setAPIConnected(false);
-            }
 
-            // 2. Fetch Funnel data
-            try {
-                const res = await fetch(`/stores/${storeId}/funnel`);
-                if (res.ok) {
-                    const data = await res.json();
+                // Funnel
+                if (results[1].status === 'fulfilled' && results[1].value.ok) {
+                    const data = await results[1].value.json();
                     document.getElementById('funnel-entry').innerText = data.entry_count;
                     document.getElementById('funnel-zone').innerText = data.zone_visit_count;
                     document.getElementById('funnel-billing').innerText = data.billing_queue_count;
                     document.getElementById('funnel-purchase').innerText = data.purchase_count;
-
-                    // Update bars width based on percentages relative to entry
+                    // update bars
                     const entryVal = data.entry_count || 1;
-                    const zonePercent = (data.zone_visit_count / entryVal) * 100;
-                    const billingPercent = (data.billing_queue_count / entryVal) * 100;
-                    const purchasePercent = (data.purchase_count / entryVal) * 100;
-
-                    document.getElementById('bar-zone').style.width = zonePercent + '%';
-                    document.getElementById('bar-billing').style.width = billingPercent + '%';
-                    document.getElementById('bar-purchase').style.width = purchasePercent + '%';
-
-                    document.getElementById('drop-zone').innerText = "Drop-off: " + data.drop_off_pct_entry_to_zone.toFixed(1) + "%";
-                    document.getElementById('drop-billing').innerText = "Drop-off: " + data.drop_off_pct_zone_to_billing.toFixed(1) + "%";
-                    document.getElementById('drop-purchase').innerText = "Drop-off: " + data.drop_off_pct_billing_to_purchase.toFixed(1) + "%";
+                    document.getElementById('bar-zone').style.width = ((data.zone_visit_count / entryVal) * 100) + '%';
+                    document.getElementById('bar-billing').style.width = ((data.billing_queue_count / entryVal) * 100) + '%';
+                    document.getElementById('bar-purchase').style.width = ((data.purchase_count / entryVal) * 100) + '%';
+                    document.getElementById('drop-zone').innerText = 'Drop-off: ' + data.drop_off_pct_entry_to_zone.toFixed(1) + '%';
+                    document.getElementById('drop-billing').innerText = 'Drop-off: ' + data.drop_off_pct_zone_to_billing.toFixed(1) + '%';
+                    document.getElementById('drop-purchase').innerText = 'Drop-off: ' + data.drop_off_pct_billing_to_purchase.toFixed(1) + '%';
                 }
-            } catch (err) {
-                console.error("Error fetching funnel", err);
-            }
 
-            // 3. Fetch Heatmap data
-            try {
-                const res = await fetch(`/stores/${storeId}/heatmap`);
-                if (res.ok) {
-                    const data = await res.json();
-                    
-                    // Render Confidence Badge
+                // Heatmap
+                if (results[2].status === 'fulfilled' && results[2].value.ok) {
+                    const data = await results[2].value.json();
                     const confBadge = document.getElementById('confidence-badge');
                     if (data.data_confidence) {
-                        confBadge.className = "confidence-badge confidence-high";
-                        confBadge.innerText = "High Confidence (>= 20 sessions)";
+                        confBadge.className = 'confidence-badge confidence-high';
+                        confBadge.innerText = 'High Confidence (>= 20 sessions)';
                     } else {
-                        confBadge.className = "confidence-badge confidence-low";
-                        confBadge.innerText = "Low Confidence (< 20 sessions)";
+                        confBadge.className = 'confidence-badge confidence-low';
+                        confBadge.innerText = 'Low Confidence (< 20 sessions)';
                     }
-
-                    // Render Heatmap Items
                     const listContainer = document.getElementById('heatmap-list');
                     listContainer.innerHTML = '';
-
-                    // Also compute top avg dwell for metric card
-                    let topAvgDwell = 0;
-                    let topZone = null;
-                    if (data.zones && data.zones.length > 0) {
+                    let topAvgDwell = 0; let topZone = '';
+                    if (data.zones && data.zones.length) {
                         data.zones.forEach(z => {
-                            if (z.avg_dwell_ms > topAvgDwell) {
-                                topAvgDwell = z.avg_dwell_ms;
-                                topZone = z.zone_id;
-                            }
+                            if (z.avg_dwell_ms > topAvgDwell) { topAvgDwell = z.avg_dwell_ms; topZone = z.zone_id; }
                             const avgDwellSecs = (z.avg_dwell_ms / 1000).toFixed(1);
-                            const itemHtml = `
-                                <div class="heatmap-item">
-                                    <div class="heatmap-details">
-                                        <span class="heatmap-zone-name">${z.zone_id}</span>
-                                        <span class="heatmap-stats">Avg Dwell: ${avgDwellSecs}s</span>
-                                    </div>
-                                    <div class="heatmap-val-group">
-                                        <span class="heatmap-percent">${z.visit_frequency_normalized.toFixed(0)}%</span>
-                                        <div class="heatmap-bar-container">
-                                            <div class="heatmap-bar" style="width: ${z.visit_frequency_normalized}%;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                            listContainer.innerHTML += itemHtml;
+                            const item = document.createElement('div');
+                            item.className = 'heatmap-item';
+                            item.innerHTML = `<div class="heatmap-details"><span class="heatmap-zone-name" title="${z.zone_id}">${z.zone_id}</span><span class="heatmap-stats">Avg Dwell: ${avgDwellSecs}s</span></div><div class="heatmap-val-group"><span class="heatmap-percent">${z.visit_frequency_normalized.toFixed(0)}%</span><div class="heatmap-bar-container"><div class="heatmap-bar" style="width: ${z.visit_frequency_normalized}%;"></div></div></div>`;
+                            listContainer.appendChild(item);
                         });
                     } else {
                         listContainer.innerHTML = '<div class="no-data">No active zone dwells</div>';
                     }
-
-                    // Update Avg Dwell metric card
-                    const avgDwellEl = document.getElementById('val-avg-dwell');
+                    // avg dwell card
+                    const avgEl = document.getElementById('val-avg-dwell');
+                    const zoneNameEl = document.getElementById('avg-zone-name');
                     if (topZone) {
-                        avgDwellEl.innerText = (topAvgDwell / 1000).toFixed(1) + 's (' + topZone + ')';
+                        avgEl.innerText = (topAvgDwell / 1000).toFixed(1) + 's ';
+                        zoneNameEl.innerText = topZone;
+                        zoneNameEl.title = topZone;
                     } else {
-                        avgDwellEl.innerText = '--s';
+                        avgEl.innerText = '--s'; zoneNameEl.innerText = '';
                     }
+
+                    // Update bubble chart (x: visit freq %, y: avg dwell s, r: size)
+                    try {
+                        const canvas = document.getElementById('heatmap-bubble');
+                        if (canvas && data.zones) {
+                            const points = data.zones.map(z => ({ x: z.visit_frequency_normalized, y: (z.avg_dwell_ms/1000), r: Math.max(4, z.visit_frequency_normalized/6) }));
+                            const colors = data.zones.map(z => z.zone_id === topZone ? 'rgba(127,119,221,0.95)' : 'rgba(29,158,117,0.75)');
+                            const chartData = { datasets: [{ label: 'Zones', data: points, backgroundColor: colors } ] };
+                            if (!heatmapChart) {
+                                heatmapChart = new Chart(canvas.getContext('2d'), {
+                                    type: 'bubble',
+                                    data: chartData,
+                                    options: {
+                                        maintainAspectRatio: false,
+                                        scales: {
+                                            x: { title: { display: true, text: 'Visit Frequency (%)' }, beginAtZero: true, max: 100 },
+                                            y: { title: { display: true, text: 'Avg Dwell (s)' }, beginAtZero: true }
+                                        },
+                                        plugins: { legend: { display: false } }
+                                    }
+                                });
+                            } else {
+                                heatmapChart.data = chartData;
+                                heatmapChart.update();
+                            }
+                        }
+                    } catch (e) { console.warn('Chart update failed', e); }
+
                     document.getElementById('time-avg-dwell').innerText = 'Updated: ' + updatedTime;
                 }
-            } catch (err) {
-                console.error("Error fetching heatmap", err);
-            }
 
-            // New: Fetch Stats (events count)
-            try {
-                const res = await fetch(`/stores/${storeId}/stats`);
-                if (res.ok) {
-                    const data = await res.json();
+                // Stats
+                if (results[5].status === 'fulfilled' && results[5].value.ok) {
+                    const data = await results[5].value.json();
                     const eventsEl = document.getElementById('val-events');
-                    const prev = parseInt(eventsEl.getAttribute('data-prev') || '0', 10);
-                    const curr = data.total_events || 0;
-                    eventsEl.innerText = curr;
-                    eventsEl.setAttribute('data-prev', curr);
-                    // simple flash animation when increased
-                    if (curr > prev) {
-                        eventsEl.style.transform = 'scale(1.06)';
-                        setTimeout(() => eventsEl.style.transform = 'scale(1)', 300);
-                    }
+                    eventsEl.innerText = data.total_events || 0;
                     document.getElementById('time-events').innerText = 'Updated: ' + updatedTime;
                 }
-            } catch (err) {
-                console.error('Error fetching stats', err);
-            }
 
-            // 4. Fetch Anomalies
-            try {
-                const res = await fetch(`/stores/${storeId}/anomalies`);
-                if (res.ok) {
-                    const data = await res.json();
+                // Anomalies
+                if (results[3].status === 'fulfilled' && results[3].value.ok) {
+                    const data = await results[3].value.json();
                     const listContainer = document.getElementById('anomalies-list');
                     listContainer.innerHTML = '';
                     if (data.active_anomalies && data.active_anomalies.length > 0) {
                         data.active_anomalies.forEach(anom => {
-                            const severityLower = anom.severity.toLowerCase();
-                            const cardHtml = `
-                                <div class="anomaly-card anomaly-${severityLower}">
-                                    <div class="anomaly-header">
-                                        <span class="anomaly-severity severity-${severityLower}">${anom.severity}</span>
-                                    </div>
-                                    <div class="anomaly-desc">${anom.description}</div>
-                                    <div class="anomaly-action">Action: ${anom.suggested_action}</div>
-                                </div>
-                            `;
-                            listContainer.innerHTML += cardHtml;
+                            const sev = anom.severity.toLowerCase();
+                            const card = document.createElement('div');
+                            card.className = `anomaly-card anomaly-${sev}`;
+                            card.innerHTML = `<div class="anomaly-header"><span class="anomaly-severity severity-${sev}">${anom.severity}</span></div><div class="anomaly-desc">${anom.description}</div><div class="anomaly-action">→ ${anom.suggested_action}</div>`;
+                            listContainer.appendChild(card);
                         });
                     } else {
-                        listContainer.innerHTML = '<div class="no-data">No active anomalies detected</div>';
+                        listContainer.innerHTML = '<div class="no-data">All systems normal</div>';
                     }
                 }
-            } catch (err) {
-                console.error("Error fetching anomalies", err);
-            }
 
-            // 5. Fetch Health Status
-            try {
-                const res = await fetch('/health');
-                if (res.ok) {
-                    const data = await res.json();
-                    
-                    // Service Status
+                // Health
+                if (results[4].status === 'fulfilled' && results[4].value.ok) {
+                    const data = await results[4].value.json();
                     const healthApi = document.getElementById('health-api-status');
                     healthApi.innerText = data.status;
-                    if (data.status === "OK") {
-                        healthApi.className = "health-value status-ok";
-                    } else {
-                        healthApi.className = "health-value status-warn";
-                    }
-
-                    // Last Ingested Event per Store
-                    const lastTs = data.last_event_timestamps[storeId];
+                    healthApi.className = data.status === 'OK' ? 'health-value status-ok' : 'health-value status-warn';
+                    // show last event per store
+                    const lastTs = data.last_event_timestamps || {};
                     const healthLast = document.getElementById('health-last-event');
-                    if (lastTs) {
-                        const date = new Date(lastTs);
-                        healthLast.innerText = date.toISOString().replace('T', ' ').substring(0, 19) + " UTC";
-                    } else {
-                        healthLast.innerText = "No events ingested";
-                    }
-
-                    // Lag Warnings
+                    const ts = lastTs[storeId];
+                    if (ts) {
+                        const d = new Date(ts);
+                        healthLast.innerText = d.toISOString().replace('T',' ').substring(0,19) + ' UTC';
+                    } else healthLast.innerText = 'No events ingested';
+                    // warnings
                     const healthWarn = document.getElementById('health-warnings');
-                    if (data.warnings && data.warnings.length > 0) {
-                        // Check if warning is for this store
-                        const storeWarning = data.warnings.find(w => w.includes(storeId));
-                        if (storeWarning) {
-                            healthWarn.innerText = "STALE_FEED: >10 min lag";
-                            healthWarn.className = "health-value status-warn";
-                        } else {
-                            healthWarn.innerText = "Feed Normal";
-                            healthWarn.className = "health-value status-ok";
-                        }
-                    } else {
-                        healthWarn.innerText = "Feed Normal";
-                        healthWarn.className = "health-value status-ok";
-                    }
+                    if (data.warnings && data.warnings.length) {
+                        const stale = data.warnings.find(w => w.type && w.type === 'STALE_FEED' && w.store_id === storeId);
+                        if (stale) { healthWarn.innerText = `STALE: ${stale.lag_minutes} min`; healthWarn.className = 'health-value status-warn'; }
+                        else { healthWarn.innerText = 'Feed Normal'; healthWarn.className = 'health-value status-ok'; }
+                    } else { healthWarn.innerText = 'Feed Normal'; healthWarn.className = 'health-value status-ok'; }
                 }
+
+                // reset last refresh counter
+                lastRefreshSeconds = 0;
+                document.getElementById('last-refresh').innerText = 'Last refresh: 0s ago';
+
+                // clear loading states
+                document.querySelectorAll('.metric-card, .content-card').forEach(el => el.classList.remove('loading'));
+
             } catch (err) {
-                console.error("Error fetching health", err);
+                console.error('Error fetching endpoints', err);
+                setAPIConnected(false);
             }
         }
 
@@ -959,26 +986,24 @@
             const badge = document.getElementById('api-status');
             const text = document.getElementById('api-status-text');
             if (connected) {
-                badge.style.color = "var(--accent-green)";
-                badge.style.background = "var(--accent-green-glow)";
-                badge.style.borderColor = "hsla(142, 71%, 45%, 0.2)";
-                text.innerText = "LIVE CONNECTED";
+                badge.style.color = 'var(--accent-green)';
+                badge.style.background = 'rgba(29,158,117,0.08)';
+                badge.style.borderColor = 'rgba(29,158,117,0.12)';
+                text.innerText = 'LIVE CONNECTED';
             } else {
-                badge.style.color = "var(--accent-red)";
-                badge.style.background = "var(--accent-red-glow)";
-                badge.style.borderColor = "hsla(350, 89%, 60%, 0.2)";
-                text.innerText = "DISCONNECTED";
+                badge.style.color = 'var(--accent-red)';
+                badge.style.background = 'rgba(226,75,74,0.06)';
+                badge.style.borderColor = 'rgba(226,75,74,0.12)';
+                text.innerText = 'DISCONNECTED';
             }
         }
 
-        function onStoreChange() {
-            // Fetch immediately on store change
-            fetchAllData();
-        }
+        function onStoreChange() { fetchAllData(); }
 
-        // Initialize polling
+        // Start polling and ticker
         fetchAllData();
-        fetchInterval = setInterval(fetchAllData, 2000);
+        fetchInterval = setInterval(fetchAllData, POLL_INTERVAL);
+        startTicker();
     </script>
 </body>
 </html>

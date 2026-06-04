@@ -62,7 +62,7 @@ class AnomaliesResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     last_event_timestamps: Dict[str, Optional[datetime]]
-    warnings: List[str]
+    warnings: List[Dict[str, Any]]
 
 class StatsResponse(BaseModel):
     store_id: str

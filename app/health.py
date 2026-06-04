@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
 
+
 from .database import DBEvent
 from .models import HealthResponse
 
@@ -27,14 +28,19 @@ def get_health_status(db: Session) -> HealthResponse:
     else:
         ref_time = now
         
-    # Check for STALE_FEED if last event > 10 min ago
+    # Check for STALE_FEED if last event > 10 min ago — return structured warnings
     for store_id, last_ts in last_event_timestamps.items():
-        if last_ts and ref_time - last_ts > timedelta(minutes=10):
-            warnings.append(f"STALE_FEED: Store {store_id} has not sent events in over 10 minutes.")
+        if last_ts and (datetime.utcnow() - last_ts) > timedelta(minutes=10):
+            lag_mins = round((datetime.utcnow() - last_ts).total_seconds() / 60.0, 1)
+            warnings.append({
+                "type": "STALE_FEED",
+                "store_id": store_id,
+                "lag_minutes": lag_mins
+            })
             status = "WARNING"
             
     if not last_event_timestamps:
-        warnings.append("No events ingested yet.")
+        warnings.append({"type": "NO_DATA", "message": "No events ingested yet."})
         
     return HealthResponse(
         status=status,

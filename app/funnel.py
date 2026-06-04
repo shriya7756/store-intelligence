@@ -57,30 +57,26 @@ def get_funnel(store_id: str, db: Session) -> FunnelResponse:
     # 4. Purchase Count (Visitors who joined billing queue AND there was a transaction shortly after)
     # A visitor who was in the billing zone in the 5-minute window before a transaction timestamp
     # counts as a converted visitor for that session.
-    joins = db.query(DBEvent).filter(
-        DBEvent.store_id == store_id,
-        DBEvent.visitor_id.in_(billing_visitor_ids) if billing_visitor_ids else False,
-        DBEvent.is_staff == False,
-        DBEvent.event_type == 'BILLING_QUEUE_JOIN',
-        DBEvent.timestamp >= today_start,
-        DBEvent.timestamp < today_end
-    ).all()
-    
     transactions = db.query(DBPosTransaction).filter(
         DBPosTransaction.store_id == store_id,
         DBPosTransaction.timestamp >= today_start,
         DBPosTransaction.timestamp < today_end
     ).all()
-    
+
     converted_visitors = set()
-    for join in joins:
-        for tx in transactions:
-            # tx timestamp must be within 5 minutes after join timestamp
-            time_diff = (tx.timestamp - join.timestamp).total_seconds()
-            if 0 <= time_diff <= 300:
-                converted_visitors.add(join.visitor_id)
-                break
-                
+    for tx in transactions:
+        window_start = tx.timestamp - timedelta(minutes=5)
+        joins_in_window = db.query(DBEvent.visitor_id).filter(
+            DBEvent.store_id == store_id,
+            DBEvent.is_staff == False,
+            DBEvent.event_type == 'BILLING_QUEUE_JOIN',
+            DBEvent.timestamp >= window_start,
+            DBEvent.timestamp <= tx.timestamp,
+            DBEvent.visitor_id.in_(billing_visitor_ids) if billing_visitor_ids else True
+        ).distinct().all()
+        for j in joins_in_window:
+            converted_visitors.add(j[0])
+
     purchase_count = len(converted_visitors)
     
     # Calculate Drop-off Percentages

@@ -6,6 +6,10 @@ from .database import DBEvent, DBPosTransaction
 from .models import AnomaliesResponse, Anomaly
 
 def get_conversion_rate_for_range(store_id: str, start_dt: datetime, end_dt: datetime, db: Session) -> float:
+    """Compute conversion rate for a time range using a 5-minute window before each POS transaction.
+
+    This counts a visitor as converted if they have a BILLING_QUEUE_JOIN event within
+    [tx.timestamp - 5min, tx.timestamp]."""
     unique_visitors_q = db.query(DBEvent.visitor_id).filter(
         DBEvent.store_id == store_id,
         DBEvent.is_staff == False,
@@ -13,29 +17,27 @@ def get_conversion_rate_for_range(store_id: str, start_dt: datetime, end_dt: dat
         DBEvent.timestamp >= start_dt,
         DBEvent.timestamp < end_dt
     ).distinct().count()
-    
-    joins = db.query(DBEvent).filter(
-        DBEvent.store_id == store_id,
-        DBEvent.is_staff == False,
-        DBEvent.event_type == 'BILLING_QUEUE_JOIN',
-        DBEvent.timestamp >= start_dt,
-        DBEvent.timestamp < end_dt
-    ).all()
-    
+
     transactions = db.query(DBPosTransaction).filter(
         DBPosTransaction.store_id == store_id,
         DBPosTransaction.timestamp >= start_dt,
         DBPosTransaction.timestamp < end_dt
     ).all()
-    
+
     converted_visitors = set()
-    for join in joins:
-        for tx in transactions:
-            time_diff = (tx.timestamp - join.timestamp).total_seconds()
-            if 0 <= time_diff <= 300:
-                converted_visitors.add(join.visitor_id)
-                break
-                
+    for tx in transactions:
+        window_start = tx.timestamp - timedelta(minutes=5)
+        # find any billing join in that window
+        joins_in_window = db.query(DBEvent.visitor_id).filter(
+            DBEvent.store_id == store_id,
+            DBEvent.is_staff == False,
+            DBEvent.event_type == 'BILLING_QUEUE_JOIN',
+            DBEvent.timestamp >= window_start,
+            DBEvent.timestamp <= tx.timestamp
+        ).distinct().all()
+        for j in joins_in_window:
+            converted_visitors.add(j[0])
+
     return (len(converted_visitors) / unique_visitors_q) if unique_visitors_q > 0 else 0.0
 
 def check_anomalies(store_id: str, db: Session) -> AnomaliesResponse:
@@ -45,13 +47,13 @@ def check_anomalies(store_id: str, db: Session) -> AnomaliesResponse:
     latest_event = db.query(DBEvent.timestamp).filter(
         DBEvent.store_id == store_id
     ).order_by(DBEvent.timestamp.desc()).first()
-    
+
     if latest_event:
-        now = latest_event[0]
+        reference_time = latest_event[0]
     else:
-        now = datetime.utcnow()
+        reference_time = datetime.utcnow()
         
-    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    today_start = reference_time.replace(hour=0, minute=0, second=0, microsecond=0)
     today_end = today_start + timedelta(days=1)
     
     # 1. Billing Queue Spike
@@ -72,8 +74,8 @@ def check_anomalies(store_id: str, db: Session) -> AnomaliesResponse:
                 suggested_action="Open an additional billing counter."
             ))
 
-    # 2. Dead Zone (No visits in last 30 min relative to now)
-    thirty_mins_ago = now - timedelta(minutes=30)
+    # 2. Dead Zone (No visits in last 30 min relative to reference_time)
+    thirty_mins_ago = reference_time - timedelta(minutes=30)
     
     # Get all zones for store
     zones = db.query(DBEvent.zone_id).filter(
@@ -86,7 +88,7 @@ def check_anomalies(store_id: str, db: Session) -> AnomaliesResponse:
             DBEvent.store_id == store_id,
             DBEvent.zone_id == zone_id,
             DBEvent.timestamp >= thirty_mins_ago,
-            DBEvent.timestamp <= now,
+            DBEvent.timestamp <= reference_time,
             DBEvent.event_type.in_(['ZONE_ENTER', 'ZONE_DWELL'])
         ).first()
         
