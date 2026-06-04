@@ -22,3 +22,22 @@ You can pipe the generated events into the API:
 ```bash
 curl -X POST -H "Content-Type: application/json" -d @detect/events.jsonl http://localhost:8000/events/ingest
 ```
+
+## Hackathon Submission
+- **Submitter**: `shriyapachunuri`
+- **Challenge**: Purplle Tech Challenge 2026 | Round 2
+- **Team Name**: Shriya's Team 3
+- **Role**: Team Leader
+- **Team Size**: 1 member
+
+### Submission Deliverables
+- `README.md`
+- `DESIGN.md`
+- `CHOICES.md`
+- `sample_events.jsonl`
+- Source code in this repository
+
+### Notes
+- `sample_events.jsonl` provides a valid JSONL event log example for ingestion.
+- `DESIGN.md` includes an AI-Assisted Decisions section.
+- `CHOICES.md` covers model selection, schema design, and API architecture decisions.

@@ -18,6 +18,7 @@ events.jsonl
 events_floor.jsonl
 events_billing.jsonl
 *.jsonl
+!sample_events.jsonl
 
 # Environment / OS
 .venv/
