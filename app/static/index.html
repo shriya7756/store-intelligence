@@ -15,6 +15,10 @@
             --text-primary: #E8E8F0;
             --text-secondary: #888899;
             --text-tertiary: rgba(232,232,240,0.6);
+
+            /* Used across the stylesheet */
+            --text-main: var(--text-primary);
+
             --accent-purple: #7F77DD;
             --accent-green: #1D9E75;
             --accent-amber: #EF9F27;
@@ -36,7 +40,7 @@
                 radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), 
                 radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.15) 0, transparent 50%),
                 radial-gradient(at 100% 0%, hsla(217, 91%, 60%, 0.05) 0, transparent 50%);
-            color: var(--text-main);
+            color: var(--text-main, var(--text-primary));
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -90,7 +94,7 @@
         .store-selector {
             background: hsl(223, 47%, 7%);
             border: 1px solid var(--card-border);
-            color: var(--text-main);
+            color: var(--text-main, var(--text-primary));
             font-family: var(--font-outfit);
             font-size: 0.9rem;
             font-weight: 500;
