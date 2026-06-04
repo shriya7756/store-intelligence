@@ -17,6 +17,8 @@ from .funnel import get_funnel
 from .heatmap import get_heatmap
 from .anomalies import check_anomalies
 from .health import get_health_status
+from .stats import get_stats
+from .models import StatsResponse
 
 # Configure structured logging
 logging.basicConfig(level=logging.INFO)
@@ -150,3 +152,7 @@ def anomalies(store_id: str, db: Session = Depends(get_db)):
 @app.get("/health", response_model=HealthResponse)
 def health(db: Session = Depends(get_db)):
     return get_health_status(db)
+
+@app.get("/stores/{store_id}/stats", response_model=StatsResponse)
+def stats(store_id: str, db: Session = Depends(get_db)):
+    return get_stats(store_id, db)

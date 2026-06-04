@@ -589,6 +589,22 @@
                 </div>
             </div>
             <div class="metric-card">
+                <span class="card-label">Avg Dwell (Top Zone)</span>
+                <div class="value" id="val-avg-dwell">--s</div>
+                <div class="card-footer">
+                    <span class="note">Average dwell (seconds)</span>
+                    <span class="updated-time" id="time-avg-dwell">Updated: --</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <span class="card-label">Events Ingested</span>
+                <div class="value" id="val-events">--</div>
+                <div class="card-footer">
+                    <span class="note">Total events for selected store</span>
+                    <span class="updated-time" id="time-events">Updated: --</span>
+                </div>
+            </div>
+            <div class="metric-card">
                 <span class="card-label">Conversion Rate</span>
                 <div class="value" id="val-conversion">--%</div>
                 <div class="card-footer">
@@ -798,6 +814,71 @@
                     // Render Heatmap Items
                     const listContainer = document.getElementById('heatmap-list');
                     listContainer.innerHTML = '';
+
+                    // Also compute top avg dwell for metric card
+                    let topAvgDwell = 0;
+                    let topZone = null;
+                    if (data.zones && data.zones.length > 0) {
+                        data.zones.forEach(z => {
+                            if (z.avg_dwell_ms > topAvgDwell) {
+                                topAvgDwell = z.avg_dwell_ms;
+                                topZone = z.zone_id;
+                            }
+                            const avgDwellSecs = (z.avg_dwell_ms / 1000).toFixed(1);
+                            const itemHtml = `
+                                <div class="heatmap-item">
+                                    <div class="heatmap-details">
+                                        <span class="heatmap-zone-name">${z.zone_id}</span>
+                                        <span class="heatmap-stats">Avg Dwell: ${avgDwellSecs}s</span>
+                                    </div>
+                                    <div class="heatmap-val-group">
+                                        <span class="heatmap-percent">${z.visit_frequency_normalized.toFixed(0)}%</span>
+                                        <div class="heatmap-bar-container">
+                                            <div class="heatmap-bar" style="width: ${z.visit_frequency_normalized}%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            listContainer.innerHTML += itemHtml;
+                        });
+                    } else {
+                        listContainer.innerHTML = '<div class="no-data">No active zone dwells</div>';
+                    }
+
+                    // Update Avg Dwell metric card
+                    const avgDwellEl = document.getElementById('val-avg-dwell');
+                    if (topZone) {
+                        avgDwellEl.innerText = (topAvgDwell / 1000).toFixed(1) + 's (' + topZone + ')';
+                    } else {
+                        avgDwellEl.innerText = '--s';
+                    }
+                    document.getElementById('time-avg-dwell').innerText = 'Updated: ' + updatedTime;
+                }
+            } catch (err) {
+                console.error("Error fetching heatmap", err);
+            }
+
+            // New: Fetch Stats (events count)
+            try {
+                const res = await fetch(`/stores/${storeId}/stats`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const eventsEl = document.getElementById('val-events');
+                    const prev = parseInt(eventsEl.getAttribute('data-prev') || '0', 10);
+                    const curr = data.total_events || 0;
+                    eventsEl.innerText = curr;
+                    eventsEl.setAttribute('data-prev', curr);
+                    // simple flash animation when increased
+                    if (curr > prev) {
+                        eventsEl.style.transform = 'scale(1.06)';
+                        setTimeout(() => eventsEl.style.transform = 'scale(1)', 300);
+                    }
+                    document.getElementById('time-events').innerText = 'Updated: ' + updatedTime;
+                }
+            } catch (err) {
+                console.error('Error fetching stats', err);
+            }
+
                     if (data.zones && data.zones.length > 0) {
                         data.zones.forEach(z => {
                             const avgDwellSecs = (z.avg_dwell_ms / 1000).toFixed(1);
