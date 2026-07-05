@@ -3,10 +3,9 @@ import cv2
 import sys
 import json
 import uuid
-import random
 import os
 import csv
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 import time
 
 try:
@@ -201,7 +200,7 @@ def process_video(video_path: str, store_id: str, camera_id: str):
     fps = cap.get(cv2.CAP_PROP_FPS)
     if fps == 0:
         fps = 15.0
-    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     if frame_height == 0:
         frame_height = 1080
@@ -249,7 +248,7 @@ def process_video(video_path: str, store_id: str, camera_id: str):
             
             for box, track_id, conf in zip(boxes, track_ids, confidences):
                 x1, y1, x2, y2 = box
-                cx = (x1 + x2) / 2
+                (x1 + x2) / 2
                 cy = (y1 + y2) / 2
                 y_norm = cy / frame_height
                 
@@ -365,8 +364,8 @@ def process_video(video_path: str, store_id: str, camera_id: str):
                 # Process Exit
                 if zone_type == "THRESHOLD":
                     # Direction verification: check first y vs last y
-                    y_start = track["history"][0]
-                    y_end = track["history"][-1]
+                    track["history"][0]
+                    track["history"][-1]
                     # y increases downwards, so if y went from >0.5 to <0.5 (moving up/out) or similar.
                     # Standard fallback: emit EXIT since they left threshold cam area
                     ev_exit = create_event(store_id, camera_id, visitor_id, "EXIT", ts_str, is_staff=is_staff, confidence=0.90, metadata={"session_seq": seq + 1})

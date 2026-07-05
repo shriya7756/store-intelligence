@@ -2,8 +2,7 @@
 """Re-ingest synthetic events with today's timestamp to clear STALE_FEED warnings."""
 
 import requests
-import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from uuid import uuid4
 
 BASE_URL = "http://127.0.0.1:8000"

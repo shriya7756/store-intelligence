@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine, Column, String, Integer, Float, Boolean, DateTime, JSON
 from sqlalchemy.orm import declarative_base, sessionmaker
-import datetime
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./store.db"
 

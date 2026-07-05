@@ -2,12 +2,12 @@
 
 import pytest
 from fastapi.testclient import TestClient
-from datetime import datetime, timedelta
+from datetime import datetime
 from sqlalchemy.exc import OperationalError
 from unittest.mock import patch
 
 from app.main import app
-from app.database import Base, engine, SessionLocal, DBPosTransaction, DBEvent
+from app.database import Base, engine, SessionLocal, DBPosTransaction
 
 client = TestClient(app, raise_server_exceptions=False)
 

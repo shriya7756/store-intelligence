@@ -5,11 +5,10 @@ from fastapi import FastAPI, Depends, Request, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from typing import List
 
 from .models import StoreEvent, MetricResponse, FunnelResponse, HeatmapResponse, AnomaliesResponse, HealthResponse
-from .database import engine, Base, get_db, init_db
-from .ingestion import process_events, process_single_event
+from .database import get_db, init_db
+from .ingestion import process_single_event
 from .seed import load_pos_data, load_events_data
 from pydantic import ValidationError
 from .metrics import get_metrics

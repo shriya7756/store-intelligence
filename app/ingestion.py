@@ -3,7 +3,6 @@ from sqlalchemy.exc import IntegrityError
 from typing import List, Tuple
 from .models import StoreEvent
 from .database import DBEvent
-import json
 
 def process_single_event(event: StoreEvent, db: Session) -> Tuple[bool, str]:
     try:

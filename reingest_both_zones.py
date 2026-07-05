@@ -2,8 +2,7 @@
 """Re-ingest more comprehensive synthetic events with today's timestamp."""
 
 import requests
-import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from uuid import uuid4
 
 BASE_URL = "http://127.0.0.1:8000"

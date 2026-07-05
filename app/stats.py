@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from datetime import datetime
 from .database import DBEvent
 from .models import StatsResponse
 
